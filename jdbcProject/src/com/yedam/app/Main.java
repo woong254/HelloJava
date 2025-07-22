@@ -32,8 +32,8 @@ public class Main {
 			case 9: // 종료
 				run = false;
 			}
-			
 		}
 		System.out.println("end of program");
+		sc.close();
 	}//end main()
 }//end Main
