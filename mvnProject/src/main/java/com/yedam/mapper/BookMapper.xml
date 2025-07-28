@@ -3,35 +3,51 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.yedam.mapper.BookMapper">
+
 	<!-- 단건조회. -->
-  <select id="selectBook" resultType="com.yedam.vo.Book" 
-  		  parameterType="int">
-    select * from book where id = #{id}
-  </select>
-  
-  <!-- 목록조회. -->
-  <select id="selectList" resultType="com.yedam.vo.Book"
-  		  useCache="false" flushCache="true"
-  		  parameterType="int">
-  	select b.*
-	from  (select rownum rn, a.*
-       from  (select *
-              from book
-              order by id) a) b
- 	where b.rn > (#{page} - 1) * 5
+	<select id="selectBook" resultType="com.yedam.vo.Book" parameterType="int">
+		select * from book 
+		where id = #{id}
+	</select>
+
+	<!-- 목록조회. -->
+	<select id="selectList" resultType="com.yedam.vo.Book"
+		useCache="false" flushCache="true" parameterType="int">
+		select b.*
+		from (select rownum rn, a.*
+		      from (select *
+		            from book
+		            order by id) a) b
+		where b.rn > (#{page} - 1) * 5
 	<![CDATA[
-	and   b.rn <= #{page} * 5
+	    and   b.rn <= #{page} * 5
 	]]>
-  </select>
-  
-  <!-- 등록 resultType="int"-->
-  <insert id="insertBook" parameterType="com.yedam.vo.Book">
-  	insert into book (id, title, author, price)
-  	values(#{id}, #{title}, #{author}, #{price} )
-  </insert>
-  
-  <delete id="deleteBook" parameterType="int">
-  	delete from book
-  	where id = #{id}
-  </delete>
+	</select>
+
+	<select id="selectList2" resultType="com.yedam.vo.Book"
+		useCache="false" flushCache="true" parameterType="int">
+		select *
+		from book
+		order by id
+		offset #{page} * 5 rows
+		fetch next 5 rows only
+	</select>
+
+	<!-- 등록. resultType="int" -->
+	<insert id="insertBook" parameterType="com.yedam.vo.Book">
+		insert into book (id, title, author, price)
+		values(#{id}, #{title}, #{author}, #{price} )
+	</insert>
+
+	<!-- 삭제. -->
+	<delete id="deleteBook" parameterType="int">
+		delete from book
+		where id = #{id}
+	</delete>
+	
+	<select id="totalCount" resultType="int">
+	    select count(*)
+	    from book
+	</select>
+
 </mapper>
